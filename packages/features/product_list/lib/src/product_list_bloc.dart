@@ -37,14 +37,10 @@ final class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
           ProductListRefreshed() => _handleProductListRefreshed(emitter, event),
           ProductListNextPageRequested() =>
             _handleProductListNextPageRequested(emitter, event),
-          ProductListItemFavoriteToggled() =>
-            _handleProductListItemFavoriteToggled(emitter, event),
           ProductListFailedFetchRetried() =>
             _handleProductListFailedFetchRetried(emitter),
           ProductListUsernameObtained() =>
             _handleProductListUsernameObtained(emitter),
-          ProductListItemUpdated() =>
-            _handleProductListItemUpdated(emitter, event),
           ProductListFilterByFavoritesToggled() =>
             _handleProductListFilterByFavoritesToggled(emitter),
         },
@@ -87,18 +83,6 @@ final class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
     return emitter.onEach<ProductListState>(
       firstPageFetchStream.asStream(),
       onData: emitter,
-    );
-  }
-
-  void _handleProductListItemUpdated(
-    Emitter emitter,
-    ProductListItemUpdated event,
-  ) {
-    // Replaces the updated Product in the current state and re-emits it.
-    emitter(
-      state.copyWithUpdatedProduct(
-        event.updatedProduct,
-      ),
     );
   }
 
@@ -196,63 +180,6 @@ final class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
       nextPageFetchStream.asStream(),
       onData: emitter,
     );
-  }
-
-  Future<void> _handleProductListItemFavoriteToggled(
-    Emitter emitter,
-    ProductListItemFavoriteToggled event,
-  ) async {
-    try {
-      // The `favoriteProduct()` and `unfavoriteProduct()` functions return you the
-      // updated Product object.
-      final updatedProduct = await (event is ProductListItemFavorited
-          ? _yumQuickBackend.favoriteProduct(
-              event.id,
-            )
-          : _yumQuickBackend.favoriteProduct(
-              event.id,
-            ));
-      final isFilteringByFavorites =
-          state.filter is ProductListFilterByFavorites;
-
-      // If the user isn't filtering by favorites, you just replace the changed
-      // Product on-screen.
-      if (!isFilteringByFavorites) {
-        emitter(
-          state.copyWithUpdatedProduct(
-            updatedProduct,
-          ),
-        );
-      } else {
-        // If the user *is* filtering by favorites, that means the user is
-        // actually *removing* a Product from the list, so you refresh the entire
-        // list to make sure you won't break the pagination.
-        emitter(
-          ProductListState(
-            filter: state.filter,
-          ),
-        );
-
-        final firstPageFetchStream = _fetchProductPage(
-          1,
-        );
-
-        await emitter.onEach<ProductListState>(
-          firstPageFetchStream.asStream(),
-          onData: emitter,
-        );
-      }
-    } catch (error) {
-      // If an error happens trying to (un)favorite a Product you attach an error
-      // to the current state which will result on the screen showing a snackbar
-      // to the user and possibly taking him to the Sign In screen in case the
-      // cause is the user being signed out.
-      emitter(
-        state.copyWithFavoriteToggleError(
-          error,
-        ),
-      );
-    }
   }
 
   Future<void> _handleProductListFilterByFavoritesToggled(

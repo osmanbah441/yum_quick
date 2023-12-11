@@ -42,33 +42,10 @@ final class ProductListFilterByFavoritesToggled extends ProductListEvent {
   const ProductListFilterByFavoritesToggled();
 }
 
-abstract base class ProductListItemFavoriteToggled extends ProductListEvent {
-  const ProductListItemFavoriteToggled(this.id);
-
-  final String id;
-
-  @override
-  List<Object?> get props => [id];
-}
-
-final class ProductListItemUnfavorited extends ProductListItemFavoriteToggled {
-  const ProductListItemUnfavorited(String id) : super(id);
-}
-
-final class ProductListItemFavorited extends ProductListItemFavoriteToggled {
-  const ProductListItemFavorited(String id) : super(id);
-}
-
 final class ProductListFailedFetchRetried extends ProductListEvent {
   const ProductListFailedFetchRetried();
 }
 
 final class ProductListUsernameObtained extends ProductListEvent {
   const ProductListUsernameObtained();
-}
-
-final class ProductListItemUpdated extends ProductListEvent {
-  const ProductListItemUpdated(this.updatedProduct);
-
-  final Product updatedProduct;
 }

@@ -1,9 +1,8 @@
-name: component_library
+name: product_details
 description: "A new Flutter package project."
 version: 0.0.1
 homepage:
 publish_to: 'none'
-
 environment:
   sdk: '>=3.2.0 <4.0.0'
   flutter: ">=1.17.0"
@@ -11,14 +10,19 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
   domain_models:
-    path: ../domain_models
+    path: ../../domain_models
+  component_library:
+    path: ../../component_library
+  yum_quick_backend:
+    path: ../../yum_quick_backend
+
+  # third party
+  equatable: ^2.0.5
+  flutter_bloc: ^8.1.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
-
-flutter:
-  assets:
-    - assets/images/

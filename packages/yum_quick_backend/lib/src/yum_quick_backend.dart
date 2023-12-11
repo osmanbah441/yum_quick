@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as authn;
 import 'package:firebase_core/firebase_core.dart';
@@ -23,9 +25,10 @@ final class YumQuickBackend {
     );
 
     if (kDebugMode) {
+      final host = Platform.isAndroid ? '192.168.1.101' : 'localhost';
       try {
-        FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
-        await authn.FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+        FirebaseFirestore.instance.useFirestoreEmulator(host, 8080);
+        await authn.FirebaseAuth.instance.useAuthEmulator(host, 9099);
       } catch (e) {
         rethrow;
       }
@@ -34,12 +37,12 @@ final class YumQuickBackend {
 
   void signIn(String email, String password) {}
 
-  Future<ProductListPage> getProductListPage(
-      {required int page,
-      String searchTerm = '',
-      String? tag,
-      String? favoritedByUsername,
-      int pageSize = 2}) async {
+  Future<ProductListPage> getProductListPage({
+    required int page,
+    String searchTerm = '',
+    String? tag,
+    String? favoritedByUsername,
+  }) async {
     var productQuery = _db.collection('products').orderBy('name');
 
     if (searchTerm.isNotEmpty) {
@@ -54,11 +57,11 @@ final class YumQuickBackend {
       productQuery = productQuery.where('isFavorite', isEqualTo: true);
     }
 
-    return await _fetchPaginatePage(page, productQuery, pageSize);
+    return await _fetchNetworkPage(page, productQuery);
   }
 
-  Future<ProductListPage> _fetchPaginatePage(
-      int page, Query query, int pageSize) async {
+  Future<ProductListPage> _fetchNetworkPage(int page, Query query,
+      {int pageSize = 20}) async {
     final isFirstPage = page == 1;
     if (isFirstPage) _lastDocSnapshot = null;
 
@@ -79,9 +82,18 @@ final class YumQuickBackend {
     );
   }
 
-  favoriteProduct(String id) {}
+  favoriteProduct(String productId) {}
 
   Stream<User?> getUser() {
     return Stream.value(User(email: '', username: 'osman'));
   }
+
+  Future<Product> getProductDetails(String productId) async {
+    final doc = await _db.collection('products').doc(productId).get();
+    return Product.fromFirestore(doc.data() as Map<String, dynamic>, doc.id);
+  }
+
+  upvoteProduct(String productId) {}
+
+  unfavoriteQuote(String productId) {}
 }
