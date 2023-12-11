@@ -25,14 +25,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "8.1.2"
-  bloc_concurrency:
-    dependency: "direct main"
-    description:
-      name: bloc_concurrency
-      sha256: "44535c9f429cd7e91d548cf89fde1c23a8b4b3637decdb1865bb583091a00d4e"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.2"
   boolean_selector:
     dependency: transitive
     description:
@@ -92,14 +84,14 @@ packages:
   component_library:
     dependency: "direct main"
     description:
-      path: "packages/component_library"
+      path: "../../component_library"
       relative: true
     source: path
     version: "0.0.1"
   domain_models:
     dependency: "direct main"
     description:
-      path: "packages/domain_models"
+      path: "../../domain_models"
       relative: true
     source: path
     version: "0.0.1"
@@ -188,14 +180,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.3"
-  flutter_staggered_grid_view:
-    dependency: transitive
-    description:
-      name: flutter_staggered_grid_view
-      sha256: "19e7abb550c96fbfeb546b23f3ff356ee7c59a019a651f8f102a4ba9b7349395"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.7.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -206,14 +190,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  go_router:
-    dependency: "direct main"
-    description:
-      name: go_router
-      sha256: c247a4f76071c3b97bb5ae8912968870d5565644801c5e09f3bc961b4d874895
-      url: "https://pub.dev"
-    source: hosted
-    version: "12.1.1"
   http_parser:
     dependency: transitive
     description:
@@ -222,14 +198,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.2"
-  infinite_scroll_pagination:
-    dependency: transitive
-    description:
-      name: infinite_scroll_pagination
-      sha256: b68bce20752fcf36c7739e60de4175494f74e99e9a69b4dd2fe3a1dd07a7f16a
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.0.0"
   js:
     dependency: transitive
     description:
@@ -246,14 +214,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
-  logging:
-    dependency: transitive
-    description:
-      name: logging
-      sha256: "623a88c9594aa774443aa3eb2d41807a48486b5613e67599fb4c41c0ad47c340"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.2.0"
   matcher:
     dependency: transitive
     description:
@@ -302,20 +262,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.7"
-  product_details:
-    dependency: "direct main"
-    description:
-      path: "packages/features/product_details"
-      relative: true
-    source: path
-    version: "0.0.1"
-  product_list:
-    dependency: "direct main"
-    description:
-      path: "packages/features/product_list"
-      relative: true
-    source: path
-    version: "0.0.1"
   provider:
     dependency: transitive
     description:
@@ -324,27 +270,11 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.1"
-  rxdart:
-    dependency: "direct main"
-    description:
-      name: rxdart
-      sha256: "0c7c0cedd93788d996e33041ffecda924cc54389199cde4e6a34b440f50044cb"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.27.7"
   sky_engine:
     dependency: transitive
     description: flutter
     source: sdk
     version: "0.0.99"
-  sliver_tools:
-    dependency: transitive
-    description:
-      name: sliver_tools
-      sha256: eae28220badfb9d0559207badcbbc9ad5331aac829a88cb0964d330d2a4636a6
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.12"
   source_span:
     dependency: transitive
     description:
@@ -369,14 +299,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.2"
-  stream_transform:
-    dependency: transitive
-    description:
-      name: stream_transform
-      sha256: "14a00e794c7c11aa145a170587321aedce29769c08d7f58b1d141da75e3b1c6f"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.0"
   string_scanner:
     dependency: transitive
     description:
@@ -428,10 +350,10 @@ packages:
   yum_quick_backend:
     dependency: "direct main"
     description:
-      path: "packages/yum_quick_backend"
+      path: "../../yum_quick_backend"
       relative: true
     source: path
     version: "0.0.1"
 sdks:
   dart: ">=3.2.0 <4.0.0"
-  flutter: ">=3.7.0"
+  flutter: ">=3.3.0"

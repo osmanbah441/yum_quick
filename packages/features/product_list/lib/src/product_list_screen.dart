@@ -15,12 +15,12 @@ class ProductListScreen extends StatelessWidget {
     super.key,
     required this.onAuthenticationError,
     required this.yumQuickBackend,
-    this.onProductSelected,
+    required this.onProductSelected,
     this.onProfileAvaterTap,
     this.onCartIconTap,
   });
 
-  final ProductSelected? onProductSelected;
+  final ProductSelected onProductSelected;
   final VoidCallback? onProfileAvaterTap;
   final VoidCallback? onCartIconTap;
   final YumQuickBackend yumQuickBackend;
@@ -40,16 +40,17 @@ class ProductListScreen extends StatelessWidget {
   }
 }
 
+@visibleForTesting
 class ProductListView extends StatefulWidget {
   const ProductListView({
     super.key,
-    this.onProductSelected,
+    required this.onProductSelected,
     this.onProfileAvaterTap,
     this.onCartIconTap,
     required this.onAuthenticationError,
   });
 
-  final ProductSelected? onProductSelected;
+  final ProductSelected onProductSelected;
   final VoidCallback? onProfileAvaterTap;
   final VoidCallback? onCartIconTap;
   final void Function(BuildContext context) onAuthenticationError;

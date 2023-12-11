@@ -11,18 +11,18 @@ class ProductPagedGridView extends StatelessWidget {
   const ProductPagedGridView({
     super.key,
     required this.pagingController,
-    this.onProductSelected,
+    required this.onProductSelected,
   });
 
   final PagingController<int, Product> pagingController;
-  final ProductSelected? onProductSelected;
+  final ProductSelected onProductSelected;
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
         builder: (context, constraints) {
           final bloc = context.read<ProductListBloc>();
 
-          int gridColumnCount = constraints.maxWidth ~/ 200;
+          int gridColumnCount = constraints.maxWidth ~/ 150;
           gridColumnCount = max(1, min(gridColumnCount, 3));
 
           return Padding(
@@ -34,26 +34,7 @@ class ProductPagedGridView extends StatelessWidget {
                   itemBuilder: (context, product, index) {
                     return ProductCard(
                       product: product,
-                      onFavorite: () {
-                        bloc.add(
-                          product.isFavorite
-                              ? ProductListItemUnfavorited(product.id!)
-                              : ProductListItemFavorited(product.id!),
-                        );
-                      },
-                      onTap: onProductSelected != null
-                          ? () async {
-                              final updatedProduct =
-                                  await onProductSelected!(product.id!);
-
-                              if (updatedProduct != null &&
-                                  updatedProduct.isFavorite !=
-                                      product.isFavorite) {
-                                bloc.add(
-                                    ProductListItemUpdated(updatedProduct));
-                              }
-                            }
-                          : null,
+                      onTap: () => onProductSelected(product.id!),
                     );
                   },
                   firstPageErrorIndicatorBuilder: (context) {
@@ -65,8 +46,8 @@ class ProductPagedGridView extends StatelessWidget {
                   },
                 ),
                 crossAxisCount: gridColumnCount,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8),
+                crossAxisSpacing: 4,
+                mainAxisSpacing: 4),
           );
         },
       );
