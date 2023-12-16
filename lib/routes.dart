@@ -1,46 +1,102 @@
+import 'package:cart_repository/cart_repository.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:order_list/order_list.dart';
+import 'package:order_repository/order_repository.dart';
 import 'package:product_details/product_details.dart';
 import 'package:product_list/product_list.dart';
-import 'package:yum_quick_backend/yum_quick_backend.dart';
+import 'package:product_repository/product_repository.dart';
+import 'package:shopping_cart/shopping_cart.dart';
+import 'package:user_repository/user_repository.dart';
 
-final class YumQuickRouter {
-  static final _yumQuickBackend = YumQuickBackend();
+final class AppRouter {
+  static const _productRepository = ProductRepository();
+  static const _userRepository = UserRepository();
+  static final _cartRepository = CartRepository();
+  static final _orderRepository = OrderRepository();
 
   static final router = GoRouter(
-    debugLogDiagnostics: true,
     initialLocation: _PathConstants.productListPath,
-    routes: [
-      _productListRoute,
-      _productDetailsRoute,
-    ],
+    routes: [_bottomNavigationRoute, _productDetailsRoute],
   );
+
+  static final _bottomNavigationRoute = ShellRoute(
+      routes: [
+        _productListRoute,
+        _shoppingCartRoute,
+        _orderListRoute,
+      ],
+      builder: (context, state, child) => SafeArea(
+            child: Scaffold(
+              bottomNavigationBar: NavigationBar(
+                labelBehavior:
+                    NavigationDestinationLabelBehavior.onlyShowSelected,
+                selectedIndex:
+                    (state.fullPath == _PathConstants.shoppingCartPath)
+                        ? 1
+                        : (state.fullPath == _PathConstants.ordersListPath)
+                            ? 2
+                            : 0,
+                onDestinationSelected: (index) => (index == 1)
+                    ? context.go(_PathConstants.shoppingCartPath)
+                    : (index == 2)
+                        ? context.go(_PathConstants.ordersListPath)
+                        : context.go(_PathConstants.productListPath),
+                destinations: const [
+                  NavigationDestination(icon: Icon(Icons.home), label: 'home'),
+                  NavigationDestination(
+                      icon: Icon(Icons.shopping_cart), label: 'cart'),
+                  NavigationDestination(
+                      icon: Icon(Icons.book), label: 'orders'),
+                ],
+              ),
+              body: child,
+            ),
+          ));
 
   static final _productListRoute = GoRoute(
     path: _PathConstants.productListPath,
     builder: (context, state) => ProductListScreen(
+      userRepository: _userRepository,
+      productRepository: _productRepository,
       onAuthenticationError: (context) {},
-      yumQuickBackend: _yumQuickBackend,
-      onProductSelected: (id) async {
-        context.go(_PathConstants.productDetailsPath(productId: id));
-        return null;
-      },
+      onProductSelected: (id) =>
+          context.go(_PathConstants.productDetailsPath(productId: id)),
     ),
   );
 
   static final _productDetailsRoute = GoRoute(
       path: _PathConstants.productDetailsPath(),
       builder: (context, state) => ProductDetailsScreen(
+            cartRepository: _cartRepository,
             productId:
                 state.pathParameters[_PathConstants.productIdPathParamter]!,
             onAuthenticationError: () {},
-            onProductPoped: (product) {
+            onBackButtonTap: () {
               context.go(_PathConstants.productListPath);
             },
-            yumQuickBackend: _yumQuickBackend,
+            productRepository: _productRepository,
+          ));
+
+  static final _shoppingCartRoute = GoRoute(
+      path: _PathConstants.shoppingCartPath,
+      builder: (context, __) => CartScreen(
+            orderRepository: _orderRepository,
+            cartRepository: _cartRepository,
+            userId: '1',
+            onAuthenticationError: () {},
+          ));
+
+  static final _orderListRoute = GoRoute(
+      path: _PathConstants.ordersListPath,
+      builder: (_, __) => OrderListScreen(
+            orderRepository: _orderRepository,
+            onAuthenticationError: () {},
+            userId: '',
           ));
 }
 
-final class _PathConstants {
+abstract final class _PathConstants {
   const _PathConstants._();
 
   static const productIdPathParamter = 'productId';
@@ -51,4 +107,8 @@ final class _PathConstants {
 
   static String productDetailsPath({String? productId}) =>
       '$productListPath/${productId ?? ":$productIdPathParamter"}';
+
+  static String get shoppingCartPath => '${rootPath}shoppings-cart';
+
+  static String get ordersListPath => '${rootPath}orders';
 }

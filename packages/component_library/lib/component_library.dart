@@ -1,4 +1,3 @@
-export 'src/yummy_searchbar.dart';
 export 'src/expanded_elevated_button.dart';
 export 'src/authentication_required_error_snackbar.dart';
 export 'src/generic_error_snackbar.dart';
@@ -10,5 +9,4 @@ export 'src/favorite_icon_button.dart';
 export 'src/in_progress_text_button.dart';
 export 'src/nutritional_info.dart';
 export 'src/user_review_widget.dart';
-export 'src/shopping_cart_quantity_picker.dart';
 export 'src/product_size_picker.dart';

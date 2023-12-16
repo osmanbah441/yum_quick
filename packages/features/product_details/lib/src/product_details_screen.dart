@@ -1,36 +1,36 @@
+import 'package:cart_repository/cart_repository.dart';
 import 'package:component_library/component_library.dart';
 import 'package:domain_models/domain_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:product_details/src/product_details_cubit.dart';
-import 'package:yum_quick_backend/yum_quick_backend.dart';
-
-typedef OnProductPoped = Function(Product?);
+import 'package:product_repository/product_repository.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
   const ProductDetailsScreen({
     required this.productId,
     required this.onAuthenticationError,
-    required this.yumQuickBackend,
+    required this.productRepository,
+    required this.cartRepository,
     super.key,
-    required this.onProductPoped,
+    required this.onBackButtonTap,
   });
 
   final String productId;
-  final VoidCallback onAuthenticationError;
-  final OnProductPoped onProductPoped;
-  final YumQuickBackend yumQuickBackend;
+  final VoidCallback onAuthenticationError, onBackButtonTap;
+  final ProductRepository productRepository;
+  final CartRepository cartRepository;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ProductDetailsCubit>(
       create: (_) => ProductDetailsCubit(
-        productId: productId,
-        productRepository: yumQuickBackend,
-      ),
+          productId: productId,
+          productRepository: productRepository,
+          cartRepository: cartRepository),
       child: ProductDetailsView(
         onAuthenticationError: onAuthenticationError,
-        onProductPoped: onProductPoped,
+        onBackButtonTap: onBackButtonTap,
       ),
     );
   }
@@ -41,11 +41,10 @@ class ProductDetailsView extends StatelessWidget {
   const ProductDetailsView({
     required this.onAuthenticationError,
     super.key,
-    required this.onProductPoped,
+    required this.onBackButtonTap,
   });
 
-  final VoidCallback onAuthenticationError;
-  final OnProductPoped onProductPoped;
+  final VoidCallback onAuthenticationError, onBackButtonTap;
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +52,9 @@ class ProductDetailsView extends StatelessWidget {
       listener: (context, state) {
         final productUpdateError =
             state is ProductDetailsSuccess ? state.productUpdateError : null;
+        final productCartError =
+            state is ProductDetailsSuccess ? state.productCartError : null;
+
         if (productUpdateError != null) {
           final snackBar =
               productUpdateError is UserAuthenticationRequiredException
@@ -67,49 +69,58 @@ class ProductDetailsView extends StatelessWidget {
             onAuthenticationError();
           }
         }
+
+        if (productCartError != null) {
+          final snackBar =
+              productCartError is UserAuthenticationRequiredException
+                  ? const AuthenticationRequiredErrorSnackBar()
+                  : const GenericErrorSnackBar();
+
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(snackBar);
+
+          if (productCartError is UserAuthenticationRequiredException) {
+            onAuthenticationError();
+          }
+        }
       },
       builder: (context, state) {
-        final isSuccessState = state is ProductDetailsSuccess;
         return PopScope(
           canPop: false,
           onPopInvoked: (bool didPop) async {
             if (didPop) return;
-            final displayedProduct = isSuccessState ? state.product : null;
-            onProductPoped(displayedProduct);
+            onBackButtonTap();
           },
           child: Scaffold(
-              body: SafeArea(
-                  child: switch (state) {
-                ProductDetailsInProgress() =>
-                  const CenteredCircularProgressIndicator(),
-                ProductDetailsSuccess() => _Product(product: state.product),
-                ProductDetailsFailure() => ExceptionIndicator(
-                    onTryAgain: () {
-                      final cubit = context.read<ProductDetailsCubit>();
-                      cubit.refetch();
-                    },
-                  ),
-              }),
-              floatingActionButtonLocation: isSuccessState
-                  ? FloatingActionButtonLocation.centerFloat
-                  : null,
-              floatingActionButton: isSuccessState
-                  ? FloatingActionButton.extended(
-                      elevation: 2,
-                      isExtended: true,
-                      icon: const Icon(Icons.shopping_cart),
-                      extendedTextStyle: Theme.of(context).textTheme.titleLarge,
-                      onPressed: () {},
-                      label: Row(
-                        children: [
-                          const SizedBox(width: 8),
-                          const Text('Add to Cart'),
-                          const SizedBox(width: 32),
-                          Text('LE ${state.product.price}')
-                        ],
-                      ),
-                    )
-                  : null),
+            appBar: state is ProductDetailsSuccess
+                ? AppBar(
+                    leading: BackButton(onPressed: onBackButtonTap),
+                    title: Text(state.product.name),
+                    centerTitle: true,
+                    actions: [
+                      FavoriteIconButton(
+                        isFavorite: state.product.isFavorite,
+                        onTap: () {
+                          // TODO:
+                        },
+                      )
+                    ],
+                  )
+                : null,
+            body: SafeArea(
+                child: switch (state) {
+              ProductDetailsInProgress() =>
+                const CenteredCircularProgressIndicator(),
+              ProductDetailsSuccess() => _Product(product: state.product),
+              ProductDetailsFailure() => ExceptionIndicator(
+                  onTryAgain: () {
+                    final cubit = context.read<ProductDetailsCubit>();
+                    cubit.refetch();
+                  },
+                ),
+            }),
+          ),
         );
       },
     );
@@ -126,51 +137,55 @@ class _Product extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Image.asset(
-            product.imageUrl,
-            package: 'component_library',
-            fit: BoxFit.fitWidth,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  product.name,
-                  style: textTheme.headlineSmall,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: ListView(
+            children: [
+              Image.network(
+                height: 240,
+                product.imageUrl,
+                fit: BoxFit.fitWidth,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(product.price.toStringAsFixed(2)),
+                    const UserReviewsWidget(averageRating: 4.0),
+                  ],
                 ),
-                FavoriteIconButton(
-                  isFavorite: product.isFavorite,
-                  onTap: () {},
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  product.description ?? '',
+                  maxLines: 3,
                 ),
-              ],
-            ),
+              ),
+              ProductSizePicker(
+                  sizes: ['small', 'medium', 'large'], onSizeSelected: (d) {}),
+              const SizedBox(height: 16),
+              NutritionalInfo(nutritionalInfo: {
+                "fat": "10.0",
+                'protein': "10.30",
+                'vitmin': "30.03",
+              }),
+            ],
           ),
-          const UserReviewsWidget(averageRating: 4.0),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              product.description,
-              maxLines: 3,
-            ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: ExpandedElevatedButton(
+            icon: const Icon(Icons.shopping_cart),
+            label: 'Add to Cart',
+            onTap: () =>
+                context.read<ProductDetailsCubit>().addProductToCart(product),
           ),
-          ProductSizePicker(
-              sizes: ['small', 'medium', 'large'], onSizeSelected: (d) {}),
-          NutritionalInfo(nutritionalInfo: {
-            "fat": "10.0",
-            'protein': "10.30",
-            'vitmin': "30.03",
-          }),
-          const SizedBox(height: 56),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:product_list/src/product_page_grid_view.dart';
-import 'package:yum_quick_backend/yum_quick_backend.dart';
+import 'package:product_repository/product_repository.dart';
+import 'package:user_repository/user_repository.dart';
 
 import 'filter_horizontal_list.dart';
 
@@ -14,24 +15,23 @@ class ProductListScreen extends StatelessWidget {
   const ProductListScreen({
     super.key,
     required this.onAuthenticationError,
-    required this.yumQuickBackend,
+    required this.productRepository,
+    required this.userRepository,
     required this.onProductSelected,
     this.onProfileAvaterTap,
-    this.onCartIconTap,
   });
 
   final ProductSelected onProductSelected;
   final VoidCallback? onProfileAvaterTap;
-  final VoidCallback? onCartIconTap;
-  final YumQuickBackend yumQuickBackend;
+  final ProductRepository productRepository;
+  final UserRepository userRepository;
   final void Function(BuildContext context) onAuthenticationError;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ProductListBloc>(
       create: (_) => ProductListBloc(
-        yumQuickBackend: yumQuickBackend,
-      ),
+          productRepository: productRepository, userRepository: userRepository),
       child: ProductListView(
         onAuthenticationError: onAuthenticationError,
         onProductSelected: onProductSelected,
@@ -46,13 +46,11 @@ class ProductListView extends StatefulWidget {
     super.key,
     required this.onProductSelected,
     this.onProfileAvaterTap,
-    this.onCartIconTap,
     required this.onAuthenticationError,
   });
 
   final ProductSelected onProductSelected;
   final VoidCallback? onProfileAvaterTap;
-  final VoidCallback? onCartIconTap;
   final void Function(BuildContext context) onAuthenticationError;
 
   @override
@@ -60,7 +58,7 @@ class ProductListView extends StatefulWidget {
 }
 
 class _ProductListViewState extends State<ProductListView> {
-  final PagingController<int, Product> _pagingController = PagingController(
+  final _pagingController = PagingController<int, Product>(
     firstPageKey: 1,
   );
 
@@ -118,14 +116,21 @@ class _ProductListViewState extends State<ProductListView> {
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: YummySearchBar(
+                child: SearchBar(
                   controller: _searchBarController,
-                  imageProvider: const AssetImage(
-                    'assets/images/profile_1.jpg',
-                    package: 'component_library',
+                  elevation: MaterialStateProperty.all(1.0),
+                  hintText: 'search',
+                  leading: IconButton(
+                    onPressed: widget.onProfileAvaterTap,
+                    icon: const CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Colors.transparent,
+                      foregroundImage: AssetImage(
+                        'assets/images/profile_1.jpg',
+                        package: 'component_library',
+                      ),
+                    ),
                   ),
-                  onCartIconTap: widget.onCartIconTap,
-                  onProfileAvaterTap: widget.onProfileAvaterTap,
                 ),
               ),
               const FilterHorizontalList(),

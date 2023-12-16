@@ -1,7 +1,7 @@
 import 'package:domain_models/domain_models.dart';
 import 'package:flutter/material.dart';
 
-typedef ProductSelected = Function(String productId);
+typedef ProductSelected = void Function(String productId);
 
 class ProductCard extends StatelessWidget {
   const ProductCard({
@@ -28,10 +28,9 @@ class ProductCard extends StatelessWidget {
             children: [
               AspectRatio(
                 aspectRatio: 16 / 9,
-                child: Image.asset(
+                child: Image.network(
                   product.imageUrl,
                   fit: BoxFit.cover,
-                  package: 'component_library',
                 ),
               ),
               const SizedBox(height: 8),

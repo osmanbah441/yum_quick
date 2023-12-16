@@ -1,7 +1,7 @@
 name: yum_quick
 description: "A new Flutter project."
 publish_to: 'none'
-version: 0.1.0
+version: 0.0.1
 
 environment:
   sdk: '>=3.2.0 <4.0.0'
@@ -14,14 +14,26 @@ dependencies:
     path: ./packages/domain_models
   component_library:
     path: ./packages/component_library
-  yum_quick_backend:
-    path: ./packages/yum_quick_backend
-
+  product_repository:
+    path: ./packages/product_repository
+  user_repository:
+    path: ./packages/user_repository
+  cart_repository:
+    path: ./packages/cart_repository
+  order_repository:
+    path: ./packages/order_repository
+    
   # features
   product_list:
     path: ./packages/features/product_list
   product_details:
     path: ./packages/features/product_details
+  shopping_cart:
+    path: ./packages/features/shopping_cart
+  order_list:
+    path: ./packages/features/order_list
+  order_details:
+    path: ./packages/features/order_details
 
   # third party
   go_router: ^12.1.1

@@ -1,25 +1,29 @@
+import 'package:cart_repository/cart_repository.dart';
 import 'package:domain_models/domain_models.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:yum_quick_backend/yum_quick_backend.dart';
+import 'package:product_repository/product_repository.dart';
 
 part 'product_details_state.dart';
 
 class ProductDetailsCubit extends Cubit<ProductDetailsState> {
-  ProductDetailsCubit({
-    required this.productId,
-    required YumQuickBackend productRepository,
-  })  : _yumQuickBackend = productRepository,
+  ProductDetailsCubit(
+      {required this.productId,
+      required ProductRepository productRepository,
+      required CartRepository cartRepository})
+      : _productRepository = productRepository,
+        _cartRepository = cartRepository,
         super(const ProductDetailsInProgress()) {
     _fetchProductDetails();
   }
 
   final String productId;
-  final YumQuickBackend _yumQuickBackend;
+  final ProductRepository _productRepository;
+  final CartRepository _cartRepository;
 
   Future<void> _fetchProductDetails() async {
     try {
-      final product = await _yumQuickBackend.getProductDetails(productId);
+      final product = await _productRepository.getProductDetails(productId);
       emit(ProductDetailsSuccess(product: product));
     } catch (error) {
       emit(const ProductDetailsFailure());
@@ -34,13 +38,13 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
 
   void favoriteProduct() async {
     await _executeProductUpdateOperation(
-      () => _yumQuickBackend.favoriteProduct(productId),
+      () => _productRepository.favoriteProduct(productId),
     );
   }
 
   void unfavoriteProduct() async {
     await _executeProductUpdateOperation(
-      () => _yumQuickBackend.unfavoriteQuote(productId),
+      () => _productRepository.unfavoriteQuote(productId),
     );
   }
 
@@ -61,6 +65,21 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
             productUpdateError: error,
           ),
         );
+      }
+    }
+  }
+
+  Future<void> addProductToCart(Product product) async {
+    try {
+      await _cartRepository.addToCart(product);
+      emit(ProductDetailsSuccess(product: product));
+    } catch (error) {
+      final lastState = state;
+      if (lastState is ProductDetailsSuccess) {
+        emit(ProductDetailsSuccess(
+          product: lastState.product,
+          productCartError: error,
+        ));
       }
     }
   }

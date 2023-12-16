@@ -4,20 +4,22 @@ import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:domain_models/domain_models.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:product_repository/product_repository.dart';
+import 'package:user_repository/user_repository.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:yum_quick_backend/yum_quick_backend.dart';
 
 part 'product_list_event.dart';
 part 'product_list_state.dart';
 
 final class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
-  ProductListBloc({
-    required YumQuickBackend yumQuickBackend,
-  })  : _yumQuickBackend = yumQuickBackend,
+  ProductListBloc(
+      {required ProductRepository productRepository,
+      required UserRepository userRepository})
+      : _productRepository = productRepository,
         super(const ProductListState()) {
     _registerEventHandlers();
 
-    _authChangesSubscription = _yumQuickBackend.getUser().listen((user) {
+    _authChangesSubscription = userRepository.getUser().listen((user) {
       _authenticatedUsername = user?.username;
       add(const ProductListUsernameObtained());
     });
@@ -26,7 +28,7 @@ final class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
   late final StreamSubscription _authChangesSubscription;
   String? _authenticatedUsername;
 
-  final YumQuickBackend _yumQuickBackend;
+  final ProductRepository _productRepository;
 
   void _registerEventHandlers() => on<ProductListEvent>(
         (event, emitter) async => switch (event) {
@@ -222,10 +224,10 @@ final class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
     }
 
     try {
-      final newPage = await _yumQuickBackend.getProductListPage(
+      final newPage = await _productRepository.getProductListPage(
         page: page,
         tag: currentlyAppliedFilter is ProductListFilterByTag
-            ? currentlyAppliedFilter.tag.name
+            ? currentlyAppliedFilter.tag
             : null,
         searchTerm: currentlyAppliedFilter is ProductListFilterBySearchTerm
             ? currentlyAppliedFilter.searchTerm

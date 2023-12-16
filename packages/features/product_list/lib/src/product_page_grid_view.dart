@@ -34,7 +34,7 @@ class ProductPagedGridView extends StatelessWidget {
                   itemBuilder: (context, product, index) {
                     return ProductCard(
                       product: product,
-                      onTap: () => onProductSelected(product.id!),
+                      onTap: () => onProductSelected(product.id),
                     );
                   },
                   firstPageErrorIndicatorBuilder: (context) {

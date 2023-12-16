@@ -10,20 +10,17 @@ class UserReviewsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Row(
-        children: [
-          Text(
-            '$averageRating stars',
-          ),
-          const SizedBox(width: 8),
-          ...List.generate(
-            averageRating.round(),
-            (_) => const Icon(Icons.star, color: Colors.yellow),
-          )
-        ],
-      ),
+    return Row(
+      children: [
+        Text(
+          '$averageRating stars',
+        ),
+        const SizedBox(width: 8),
+        ...List.generate(
+          averageRating.round(),
+          (_) => const Icon(Icons.star, color: Colors.yellow),
+        )
+      ],
     );
   }
 }

@@ -1,47 +1,28 @@
-import 'package:equatable/equatable.dart';
+enum Category { shawarma, pizza, burger, yogurt }
 
-final class Product extends Equatable {
-  const Product({
-    this.id,
+class Product {
+  Product({
+    required this.id,
     required this.name,
-    required this.category,
     required this.price,
-    required this.imageUrl,
-    required this.isFavorite,
-    required this.description,
+    this.description,
+    this.imageUrl = 'https://via.placeholder.com/150',
+    this.category,
+    this.averageRating = 0.0,
+    this.numberOfRatings = 0,
+    this.inventory = 0,
+    this.isFavorite = false,
+    this.isInCart = false,
   });
-
-  final String? id;
+  final String id;
   final String name;
-  final String category;
-  final double price;
+  final String? description;
   final String imageUrl;
+  final double price;
+  final Category? category;
+  final double averageRating;
+  final int numberOfRatings;
+  final int inventory;
   final bool isFavorite;
-  final String description;
-
-  factory Product.fromFirestore(Map<String, dynamic> map, String id) {
-    return Product(
-        id: id,
-        name: map['name'] as String,
-        category: map['category'] as String,
-        price: map['price'] as double,
-        imageUrl: map['imageUrl'] as String,
-        isFavorite: map['isFavorite'] as bool,
-        description: map['description'] as String);
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'category': category,
-      'price': price,
-      'imageUrl': imageUrl,
-      'isFavorite': isFavorite,
-      'description': description,
-    };
-  }
-
-  @override
-  List<Object?> get props =>
-      [id, name, category, price, imageUrl, isFavorite, description];
+  final bool isInCart;
 }

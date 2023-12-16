@@ -15,8 +15,10 @@ dependencies:
     path: ../../domain_models
   component_library:
     path: ../../component_library
-  yum_quick_backend:
-    path: ../../yum_quick_backend
+  product_repository:
+    path: ../../product_repository
+  user_repository:
+    path: ../../user_repository
 
   # third party
   equatable: ^2.0.5
