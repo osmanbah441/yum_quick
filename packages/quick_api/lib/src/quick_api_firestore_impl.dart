@@ -1,9 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:quick_api/quick_api.dart';
 import 'package:quick_api/src/quick_api_firestore_query_builder.dart';
 
+import 'firebase_options.dart';
+
 final class QuickApiFireStoreImpl implements QuickApi {
   QuickApiFireStoreImpl();
+
+  Future<void> initializeApi({required bool kDebugMode}) async {
+    // const host = '192.168.1.10';
+    const host = 'localhost';
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+
+    if (kDebugMode) {
+      await FirebaseAuth.instance.useAuthEmulator(host, 9099);
+      FirebaseFirestore.instance.useFirestoreEmulator(host, 8080);
+      // await FirebaseStorage.instance.useEmulator(storageHost);
+    }
+  }
 
   final _queryBuilder = QuickApiFirestoreQueryBuilder();
 

@@ -1,10 +1,12 @@
 import 'package:quick_api/quick_api.dart';
-import 'package:quick_api/src/quick_api.dart';
+import 'package:quick_api/src/quick_api_firestore_impl.dart';
 
 export 'src/models/response/response.dart';
 
 abstract interface class QuickApi {
-  // factory QuickApi() => const QuickApiImp();
+  factory QuickApi() => QuickApiFireStoreImpl();
+
+  Future<void> initializeApi({required bool kDebugMode});
 
   Future<ProductListPageRM> getProductListPageRM({
     required int page,

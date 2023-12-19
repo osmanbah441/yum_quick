@@ -11,13 +11,13 @@ import 'package:quick_api/quick_api.dart';
 import 'package:shopping_cart/shopping_cart.dart';
 import 'package:user_repository/user_repository.dart';
 
-final _api = QuickApi();
+final api = QuickApi();
 
 final class AppRouter {
-  static final _productRepository = ProductRepository(api: _api);
-  static final _userRepository = UserRepository(api: _api);
-  static final _cartRepository = CartRepository(api: _api);
-  static final _orderRepository = OrderRepository(api: _api);
+  static final _productRepository = ProductRepository(api: api);
+  static final _userRepository = UserRepository(api: api);
+  static final _cartRepository = CartRepository(api: api);
+  static final _orderRepository = OrderRepository(api: api);
 
   static final router = GoRouter(
     initialLocation: _PathConstants.productListPath,

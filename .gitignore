@@ -49,3 +49,4 @@ app.*.map.json
 /web
 /windows
 **/firebase_emulator/**
+**/firebase**
