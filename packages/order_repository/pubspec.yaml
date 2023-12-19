@@ -9,6 +9,8 @@ environment:
 dependencies:
   domain_models:
     path: ../domain_models
+  quick_api:
+    path: ../quick_api
 
 dev_dependencies:
   lints: ^2.1.0

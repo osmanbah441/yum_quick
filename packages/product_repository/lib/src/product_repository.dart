@@ -1,39 +1,56 @@
 import 'package:domain_models/domain_models.dart';
+import 'package:product_repository/src/mappers/mappers.dart';
+import 'package:quick_api/quick_api.dart';
 
 class ProductRepository {
-  const ProductRepository();
-  // Simulated list of products (replace this with your actual data source)
-  static List<Product> _products = [
-    Product(id: "1", name: "T-Shirt", price: 20.0),
-    Product(id: "2", name: "Hat", price: 15.0),
-    Product(id: "3", name: "T-Shirt", price: 20.0),
-    Product(id: "4", name: "Hat", price: 15.0),
-    Product(id: "5", name: "T-Shirt", price: 20.0),
-    Product(id: "6", name: "Hat", price: 15.0),
-    Product(id: "7", name: "T-Shirt", price: 20.0),
-    Product(id: "8", name: "Hat", price: 15.0),
-    Product(id: "9", name: "T-Shirt", price: 20.0),
-    Product(id: "10", name: "Hat", price: 15.0),
-  ];
+  const ProductRepository({required QuickApi api}) : _api = api;
+
+  final QuickApi _api;
 
   Future<ProductListPage> getProductListPage({
     required int page,
-    Category? tag,
+    ProductCategory? category,
     required String searchTerm,
     String? favoritedByUsername,
   }) async {
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      final fetchPage = await _api.getProductListPageRM(
+        page: page,
+        category: category?.toRemote,
+        searchTerm: searchTerm,
+        favoritedByUsername: favoritedByUsername,
+      );
 
-    return ProductListPage(isLastPage: true, productList: _products);
+      return fetchPage.toDomain;
+    } catch (e) {
+      throw 'failed to read products';
+    }
   }
 
   Future<Product> getProductDetails(String productId) async {
-    await Future.delayed(const Duration(seconds: 1));
-
-    return _products.firstWhere((product) => product.id == productId);
+    try {
+      final fetchProduct = await _api.getProductDetails(productId);
+      return fetchProduct.toDomain;
+    } catch (e) {
+      throw 'failed to get product';
+    }
   }
 
-  favoriteProduct(String productId) {}
+  Future<Product> favoriteProduct(String productId) async {
+    try {
+      final product = await _api.favoriteProduct(productId);
+      return product.toDomain;
+    } catch (e) {
+      throw e;
+    }
+  }
 
-  unfavoriteQuote(String productId) {}
+  Future<Product> unfavoriteQuote(String productId) async {
+    try {
+      final product = await _api.unfavoriteQuote(productId);
+      return product.toDomain;
+    } catch (e) {
+      throw e;
+    }
+  }
 }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:order_repository/order_repository.dart';
 import 'package:shopping_cart/src/cart_item_title.dart';
+import 'package:user_repository/user_repository.dart';
 
 import 'cart_cubit.dart';
 
@@ -14,6 +15,7 @@ class CartScreen extends StatelessWidget {
     required this.onAuthenticationError,
     required this.cartRepository,
     required this.orderRepository,
+    required this.userRepository,
     super.key,
   });
 
@@ -21,11 +23,13 @@ class CartScreen extends StatelessWidget {
   final VoidCallback onAuthenticationError;
   final CartRepository cartRepository;
   final OrderRepository orderRepository;
+  final UserRepository userRepository;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<CartCubit>(
       create: (_) => CartCubit(
+        userRepository: userRepository,
         cartRepository: cartRepository,
         orderRepository: orderRepository,
       ),
@@ -74,8 +78,8 @@ class CartView extends StatelessWidget {
           },
           child: Scaffold(
             appBar: AppBar(
-              title: Text('Feast Assembly'),
-              leading: Icon(Icons.food_bank_outlined),
+              title: const Text('Feast Assembly'),
+              leading: const Icon(Icons.food_bank_outlined),
             ),
             body: SafeArea(
                 child: switch (state) {
@@ -111,24 +115,42 @@ class _Cart extends StatelessWidget {
         children: [
           Expanded(
             child: ListView.builder(
-              itemCount: cart.cartItems.length,
+              itemCount: cart.items.length,
               itemBuilder: (context, index) {
-                final cartItems = cart.cartItems[index];
+                final cartItems = cart.items[index];
                 return CartItemTile(
                   cartItem: cartItems,
-                  onIncrement: () => cartCubit.incrementProductQty(cartItems),
-                  onDecrement: () => cartCubit.decrementProductQty(cartItems),
-                  onRemove: () => cartCubit.removeCartItem(cartItems.id),
+                  onIncrement: () => cartCubit.incrementCartItemQty(cartItems),
+                  onDecrement: () => cartCubit.decrementCartItemQty(cartItems),
+                  onRemove: () {
+                    // cartCubit.removeCartItem(cartItems.id);
+                  },
                 );
               },
             ),
           ),
-          Text('subtotal: ${cart.subtotal}', style: textStyle),
-          Text('delivery cost: ${cart.deliveryCost}', style: textStyle),
-          Text('total: ${cart.total}', style: textStyle),
-          ExpandedElevatedButton(
-            label: 'buy now',
-            onTap: () => cartCubit.placeOrder(cart),
+          // Text('subtotal: ${cart.subtotal}', style: textStyle),
+          // Text('delivery cost: ${cart.deliveryCost}', style: textStyle),
+          Row(
+            children: [
+              Text(
+                'Total Cost: ${cart.total.toStringAsFixed(2)}',
+                style: textStyle,
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: ExpandedElevatedButton(
+                    label: 'buy now',
+                    onTap: () => showDialog(
+                          context: context,
+                          builder: (_) => OrderSummaryDialog(
+                            totalPrice: cart.total,
+                            totalQuantity: cart.quantity,
+                            onOrderConfirmed: () => cartCubit.placeOrder(cart),
+                          ),
+                        )),
+              ),
+            ],
           )
         ],
       ),

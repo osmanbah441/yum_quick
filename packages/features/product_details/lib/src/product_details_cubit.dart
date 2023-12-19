@@ -1,21 +1,33 @@
+import 'dart:async';
+
 import 'package:cart_repository/cart_repository.dart';
 import 'package:domain_models/domain_models.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:product_repository/product_repository.dart';
+import 'package:user_repository/user_repository.dart';
 
 part 'product_details_state.dart';
 
 class ProductDetailsCubit extends Cubit<ProductDetailsState> {
-  ProductDetailsCubit(
-      {required this.productId,
-      required ProductRepository productRepository,
-      required CartRepository cartRepository})
-      : _productRepository = productRepository,
+  ProductDetailsCubit({
+    required this.productId,
+    required ProductRepository productRepository,
+    required CartRepository cartRepository,
+    required UserRepository userRepository,
+  })  : _productRepository = productRepository,
         _cartRepository = cartRepository,
         super(const ProductDetailsInProgress()) {
-    _fetchProductDetails();
+    _authChangesSubscription = userRepository.getUserStream().listen((user) {
+      _authenticatedUserId = user?.id;
+      _authenticatedUserCartId = user?.cartId;
+
+      _fetchProductDetails();
+    });
   }
+
+  late final StreamSubscription _authChangesSubscription;
+  String? _authenticatedUserId, _authenticatedUserCartId;
 
   final String productId;
   final ProductRepository _productRepository;
@@ -49,10 +61,10 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
   }
 
   Future<void> _executeProductUpdateOperation(
-    Future<Product> Function() updateQuote,
+    Future<Product> Function() updateProduct,
   ) async {
     try {
-      final updatedQuote = await updateQuote();
+      final updatedQuote = await updateProduct();
       emit(
         ProductDetailsSuccess(product: updatedQuote),
       );
@@ -71,7 +83,14 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
 
   Future<void> addProductToCart(Product product) async {
     try {
-      await _cartRepository.addToCart(product);
+      final isUserAuthenticatedAndOwnsCart =
+          _authenticatedUserCartId != null && _authenticatedUserId != null;
+
+      if (!isUserAuthenticatedAndOwnsCart) {
+        throw const UserAuthenticationRequiredException();
+      }
+
+      await _cartRepository.addCartItem(_authenticatedUserCartId!, product);
       emit(ProductDetailsSuccess(product: product));
     } catch (error) {
       final lastState = state;
@@ -82,5 +101,11 @@ class ProductDetailsCubit extends Cubit<ProductDetailsState> {
         ));
       }
     }
+  }
+
+  @override
+  Future<void> close() {
+    _authChangesSubscription.cancel();
+    return super.close();
   }
 }

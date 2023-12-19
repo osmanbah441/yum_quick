@@ -19,7 +19,7 @@ final class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
         super(const ProductListState()) {
     _registerEventHandlers();
 
-    _authChangesSubscription = userRepository.getUser().listen((user) {
+    _authChangesSubscription = userRepository.getUserStream().listen((user) {
       _authenticatedUsername = user?.username;
       add(const ProductListUsernameObtained());
     });
@@ -226,7 +226,7 @@ final class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
     try {
       final newPage = await _productRepository.getProductListPage(
         page: page,
-        tag: currentlyAppliedFilter is ProductListFilterByTag
+        category: currentlyAppliedFilter is ProductListFilterByTag
             ? currentlyAppliedFilter.tag
             : null,
         searchTerm: currentlyAppliedFilter is ProductListFilterBySearchTerm

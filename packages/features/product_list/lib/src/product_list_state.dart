@@ -36,7 +36,7 @@ final class ProductListState extends Equatable {
           filter: filter,
         );
 
-  ProductListState.loadingNewTag(Category? tag)
+  ProductListState.loadingNewTag(ProductCategory? tag)
       : this(
           filter: tag != null ? ProductListFilterByTag(tag) : null,
         );
@@ -140,7 +140,7 @@ final class ProductListFilterBySearchTerm extends ProductListFilter {
 final class ProductListFilterByTag extends ProductListFilter {
   const ProductListFilterByTag(this.tag);
 
-  final Category tag;
+  final ProductCategory tag;
 
   @override
   List<Object?> get props => [tag];

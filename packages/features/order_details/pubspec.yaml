@@ -20,6 +20,8 @@ dependencies:
     path: ../../product_repository
   order_repository:
     path: ../../order_repository
+  user_repository:
+    path: ../../user_repository    
   # third party
   equatable: ^2.0.5
   flutter_bloc: ^8.1.3

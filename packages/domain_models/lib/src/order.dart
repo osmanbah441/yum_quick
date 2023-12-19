@@ -18,6 +18,7 @@ class Order extends Equatable {
     required this.quantity,
     this.status = OrderStatus.pending,
     required this.items,
+    this.formattedDate,
   });
 
   final String id;
@@ -28,28 +29,8 @@ class Order extends Equatable {
   final List<CartItem> items;
   final int quantity;
 
-  String get formattedDate {
-    final day = deliveryDate.day.toString().padLeft(2, '0');
-    final month = _shortMonthNames[deliveryDate.month];
-    final year = deliveryDate.year;
-    return "$day-$month-$year";
-  }
+  final String? formattedDate;
 
   @override
   List<Object?> get props => [id, userId, deliveryDate, status];
 }
-
-const Map<int, String> _shortMonthNames = {
-  1: 'Jan',
-  2: 'Feb',
-  3: 'Mar',
-  4: 'Apr',
-  5: 'May',
-  6: 'Jun',
-  7: 'Jul',
-  8: 'Aug',
-  9: 'Sep',
-  10: 'Oct',
-  11: 'Nov',
-  12: 'Dec',
-};

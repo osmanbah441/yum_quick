@@ -14,7 +14,7 @@ class FavoriteIconButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: onTap,
-      tooltip: 'favorite',
+      tooltip: isFavorite ? 'unfavorite' : 'favorite',
       color: Colors.red,
       iconSize: 32,
       icon: Icon(

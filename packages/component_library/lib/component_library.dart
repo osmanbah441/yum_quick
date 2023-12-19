@@ -10,3 +10,5 @@ export 'src/in_progress_text_button.dart';
 export 'src/nutritional_info.dart';
 export 'src/user_review_widget.dart';
 export 'src/product_size_picker.dart';
+export 'src/product_images_row_widget.dart';
+export 'src/order_summary_dialog.dart';

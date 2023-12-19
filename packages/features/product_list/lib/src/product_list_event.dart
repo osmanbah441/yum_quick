@@ -10,7 +10,7 @@ sealed class ProductListEvent extends Equatable {
 final class ProductListTagChanged extends ProductListEvent {
   const ProductListTagChanged(this.tag);
 
-  final Category? tag;
+  final ProductCategory? tag;
 
   @override
   List<Object?> get props => [tag];

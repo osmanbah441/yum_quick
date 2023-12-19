@@ -16,7 +16,7 @@ class FilterHorizontalList extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(children: [
         const _FavoritesChip(),
-        ...Category.values.map((tag) => _TagChip(tag: tag)).toList(),
+        ...ProductCategory.values.map((tag) => _TagChip(tag: tag)).toList(),
       ]),
     );
   }
@@ -66,17 +66,17 @@ class _TagChip extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
-  final Category tag;
+  final ProductCategory tag;
 
   @override
   Widget build(BuildContext context) {
-    final isLastTag = Category.values.last == tag;
+    final isLastTag = ProductCategory.values.last == tag;
     return Padding(
       padding: EdgeInsets.only(
         right: isLastTag ? 8 : 4,
         left: 4,
       ),
-      child: BlocSelector<ProductListBloc, ProductListState, Category?>(
+      child: BlocSelector<ProductListBloc, ProductListState, ProductCategory?>(
         selector: (state) {
           final filter = state.filter;
           final selectedTag =
@@ -106,17 +106,17 @@ void _releaseFocus(BuildContext context) {
   FocusScope.of(context).unfocus();
 }
 
-extension on Category {
+extension on ProductCategory {
   String toLocalizedString(BuildContext context) {
     switch (this) {
-      case Category.burger:
-        return Category.burger.name;
-      case Category.pizza:
-        return Category.pizza.name;
-      case Category.shawarma:
-        return Category.shawarma.name;
-      case Category.yogurt:
-        return Category.yogurt.name;
+      case ProductCategory.burger:
+        return ProductCategory.burger.name;
+      case ProductCategory.pizza:
+        return ProductCategory.pizza.name;
+      case ProductCategory.shawarma:
+        return ProductCategory.shawarma.name;
+      case ProductCategory.yogurt:
+        return ProductCategory.yogurt.name;
     }
   }
 }

@@ -255,6 +255,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.1"
+  quick_api:
+    dependency: "direct main"
+    description:
+      path: "packages/quick_api"
+      relative: true
+    source: path
+    version: "1.0.0"
   rxdart:
     dependency: "direct main"
     description:

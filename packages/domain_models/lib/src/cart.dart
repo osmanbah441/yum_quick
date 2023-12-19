@@ -6,42 +6,52 @@ class Cart extends Equatable {
   const Cart({
     required this.id,
     required this.userId,
-    required this.cartItems,
+    required this.items,
     required this.deliveryCost,
+    required this.quantity,
+    required this.subtotal,
+    required this.total,
   });
   final String id, userId;
-  final List<CartItem> cartItems;
-  final double deliveryCost;
+  final List<CartItem> items;
 
-  double get subtotal =>
-      cartItems.fold(0.0, (prev, item) => prev + item.totalPrice);
-
-  int get quantity => cartItems.fold(0, (prev, item) => prev + item.quantity);
-
-  double get total => subtotal + deliveryCost;
+  /// total product in the cart.
+  final int quantity;
+  final double deliveryCost, subtotal, total;
 
   @override
-  List<Object?> get props => [cartItems, subtotal, deliveryCost];
+  List<Object?> get props => [
+        id,
+        userId,
+        items,
+        deliveryCost,
+        quantity,
+        subtotal,
+        total,
+      ];
 }
 
 /// represents a single item within a larger order.
-class CartItem {
+class CartItem extends Equatable {
   CartItem({
-    required this.id,
+    this.id,
     required this.product,
-    int quantity = 0,
-  }) : _quantity = quantity;
+    required this.quantity,
+    required this.totalPrice,
+  });
 
-  final String id;
+  final String? id;
   final Product product;
 
-  double get totalPrice => product.price * quantity;
+  /// total product item.
+  final int quantity;
+  final double totalPrice;
 
-  int _quantity;
-
-  int get quantity => _quantity;
-
-  void setQuantity(int newQuantity) {
-    _quantity = newQuantity;
-  }
+  @override
+  List<Object?> get props => [
+        id,
+        product,
+        quantity,
+        totalPrice,
+      ];
 }

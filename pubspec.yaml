@@ -22,7 +22,9 @@ dependencies:
     path: ./packages/cart_repository
   order_repository:
     path: ./packages/order_repository
-    
+  quick_api:
+    path: ./packages/quick_api
+
   # features
   product_list:
     path: ./packages/features/product_list

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:product_details/src/product_details_cubit.dart';
 import 'package:product_repository/product_repository.dart';
+import 'package:user_repository/user_repository.dart';
 
 class ProductDetailsScreen extends StatelessWidget {
   const ProductDetailsScreen({
@@ -12,6 +13,7 @@ class ProductDetailsScreen extends StatelessWidget {
     required this.onAuthenticationError,
     required this.productRepository,
     required this.cartRepository,
+    required this.userRepository,
     super.key,
     required this.onBackButtonTap,
   });
@@ -20,11 +22,13 @@ class ProductDetailsScreen extends StatelessWidget {
   final VoidCallback onAuthenticationError, onBackButtonTap;
   final ProductRepository productRepository;
   final CartRepository cartRepository;
+  final UserRepository userRepository;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ProductDetailsCubit>(
       create: (_) => ProductDetailsCubit(
+          userRepository: userRepository,
           productId: productId,
           productRepository: productRepository,
           cartRepository: cartRepository),
@@ -102,7 +106,11 @@ class ProductDetailsView extends StatelessWidget {
                       FavoriteIconButton(
                         isFavorite: state.product.isFavorite,
                         onTap: () {
-                          // TODO:
+                          final cubit = context.read<ProductDetailsCubit>();
+                          final isFavorite = state.product.isFavorite;
+                          isFavorite
+                              ? cubit.unfavoriteProduct()
+                              : cubit.favoriteProduct();
                         },
                       )
                     ],
@@ -166,9 +174,10 @@ class _Product extends StatelessWidget {
                 ),
               ),
               ProductSizePicker(
-                  sizes: ['small', 'medium', 'large'], onSizeSelected: (d) {}),
+                  sizes: const ['small', 'medium', 'large'],
+                  onSizeSelected: (d) {}),
               const SizedBox(height: 16),
-              NutritionalInfo(nutritionalInfo: {
+              const NutritionalInfo(nutritionalInfo: {
                 "fat": "10.0",
                 'protein': "10.30",
                 'vitmin': "30.03",
@@ -181,8 +190,9 @@ class _Product extends StatelessWidget {
           child: ExpandedElevatedButton(
             icon: const Icon(Icons.shopping_cart),
             label: 'Add to Cart',
-            onTap: () =>
-                context.read<ProductDetailsCubit>().addProductToCart(product),
+            onTap: () {
+              context.read<ProductDetailsCubit>().addProductToCart(product);
+            },
           ),
         ),
       ],

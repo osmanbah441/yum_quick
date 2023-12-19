@@ -1,32 +1,57 @@
+import 'package:cart_repository/src/mappers/mappers.dart';
 import 'package:domain_models/domain_models.dart';
+import 'package:quick_api/quick_api.dart';
 
 class CartRepository {
-  int _idGenetor = 0;
+  const CartRepository({required QuickApi api}) : _api = api;
 
-  CartRepository();
-  final List<CartItem> _cartItems =
-      []; // Replace with your desired initial products
+  final QuickApi _api;
 
-  Future<void> updateItemQuantity(String productId, int newQuantity) {
-    final existingItem = _cartItems.firstWhere((p) => p.id == productId);
-    existingItem.setQuantity(newQuantity);
-    return Future
-        .value(); // Replace with actual data persistence logic if needed
+  Future<Cart> getCartById(String cartId, String userId) async {
+    try {
+      final fetchCart = await _api.getUserCartById(cartId, userId);
+      return fetchCart.toDomain;
+    } catch (e) {
+      throw e;
+    }
   }
 
-  Cart getCart() {
-    return Cart(userId: '1', id: 'id', cartItems: _cartItems, deliveryCost: 10);
+  Future<void> addCartItem(
+    String cartId,
+    Product product,
+  ) async {
+    try {
+      await _api.addCartItem(cartId, product.toRemote);
+    } catch (e) {
+      throw e;
+    }
   }
 
-  Future<void> remove(String id) async =>
-      _cartItems.removeWhere((item) => item.id == id);
-
-  Future<void> addToCart(Product product) async {
-    _cartItems.add(CartItem(id: '$_idGenetor', product: product));
-    _idGenetor++;
+  Future<void> updateCartItemQuantity(
+    String cartId,
+    String cartItemId,
+    int newQuantity,
+  ) async {
+    try {
+      await _api.updateCartItemQuantity(cartId, cartItemId, newQuantity);
+    } catch (e) {
+      throw e;
+    }
   }
 
-  Future<void> clearCart() async {
-    _cartItems.clear();
+  Future<void> removeCartItem(String cartId, String cartItemId) async {
+    try {
+      await _api.removeCartItem(cartId, cartItemId);
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<void> clearCart(String cartId) async {
+    try {
+      await _api.clearCart(cartId);
+    } catch (e) {
+      throw e;
+    }
   }
 }

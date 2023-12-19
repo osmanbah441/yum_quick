@@ -1,47 +1,50 @@
 import 'package:domain_models/domain_models.dart';
+import 'package:quick_api/quick_api.dart';
+import 'package:order_repository/src/mappers/mappers.dart';
 
 final class OrderRepository {
-  Future<void> placeOrder(Cart cart) async {}
+  const OrderRepository({
+    required QuickApi api,
+  }) : _api = api;
 
-  Future<List<Order>> getOrders() async => _genOrders;
-}
+  final QuickApi _api;
 
-List<Order> get _genOrders {
-  final items = [
-    for (var i = 0; i < 5; i++)
-      CartItem(
-        quantity: i,
-        id: ' $i',
-        product: Product(
-          id: 'id $i',
-          name: 'name $i',
-          price: 10 * i.toDouble(),
-        ),
-      ),
-  ];
+  Future<OrderListPage> getOrderListPageByUser(
+    String userId, {
+    required int page,
+    OrderStatus? status,
+  }) async {
+    try {
+      final fetchPage = await _api.getOrderListPageByUser(
+        userId,
+        page: page,
+        status: status?.toRemote,
+      );
 
-  final cart = Cart(
-    id: 'id',
-    userId: 'userId',
-    cartItems: items,
-    deliveryCost: 10.00,
-  );
+      final domainPage = fetchPage.toDomain;
+      return OrderListPage(
+        isLastPage: domainPage.isLastPage,
+        orderList: domainPage.orderList,
+      );
+    } catch (e) {
+      throw e;
+    }
+  }
 
-  return [
-    for (var i = 0; i < 5; i++)
-      Order(
-          id: 'id $i',
-          status: (i == 0)
-              ? OrderStatus.cancelled
-              : (i == 1)
-                  ? OrderStatus.pending
-                  : (i == 2)
-                      ? OrderStatus.ongoing
-                      : OrderStatus.completed,
-          userId: 'userId $i',
-          deliveryDate: DateTime(2023, i, (i + 1) * 2),
-          totalPrice: cart.total,
-          quantity: cart.quantity,
-          items: cart.cartItems)
-  ];
+  Future<Order> getUserOrderById(String orderId, String userId) async {
+    try {
+      final fetchOrder = await _api.getUserOrderById(orderId, userId);
+      return fetchOrder.toDomain;
+    } catch (e) {
+      throw e;
+    }
+  }
+
+  Future<void> placeOrderByUser(String userId, Cart cart) async {
+    try {
+      await _api.placeOrderByUser(userId, cart.toRemote);
+    } catch (e) {
+      throw e;
+    }
+  }
 }
