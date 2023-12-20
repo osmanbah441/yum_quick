@@ -1,10 +1,10 @@
 import 'package:quick_api/quick_api.dart';
-import 'package:quick_api/src/quick_api_firestore_impl.dart';
+import 'package:quick_api/src/quick_api.dart';
 
 export 'src/models/response/response.dart';
 
 abstract interface class QuickApi {
-  factory QuickApi() => QuickApiFireStoreImpl();
+  factory QuickApi() => QuickApiImpl();
 
   Future<void> initializeApi({required bool kDebugMode});
 
