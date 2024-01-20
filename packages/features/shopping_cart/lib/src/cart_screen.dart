@@ -115,9 +115,9 @@ class _Cart extends StatelessWidget {
         children: [
           Expanded(
             child: ListView.builder(
-              itemCount: cart.items.length,
+              itemCount: cart.cartItems.length,
               itemBuilder: (context, index) {
-                final cartItems = cart.items[index];
+                final cartItems = cart.cartItems[index];
                 return CartItemTile(
                   cartItem: cartItems,
                   onIncrement: () => cartCubit.incrementCartItemQty(cartItems),

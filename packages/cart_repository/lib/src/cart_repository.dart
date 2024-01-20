@@ -9,7 +9,7 @@ class CartRepository {
 
   Future<Cart> getCartById(String cartId, String userId) async {
     try {
-      final fetchCart = await _api.getUserCartById(cartId, userId);
+      final fetchCart = await _api.cart.getUserCartById(cartId, userId);
       return fetchCart.toDomain;
     } catch (e) {
       throw e;
@@ -21,7 +21,7 @@ class CartRepository {
     Product product,
   ) async {
     try {
-      await _api.addCartItem(cartId, product.toRemote);
+      await _api.cart.addCartItem(cartId, product.toRemote);
     } catch (e) {
       throw e;
     }
@@ -33,7 +33,7 @@ class CartRepository {
     int newQuantity,
   ) async {
     try {
-      await _api.updateCartItemQuantity(cartId, cartItemId, newQuantity);
+      await _api.cart.updateCartItemQuantity(cartId, cartItemId, newQuantity);
     } catch (e) {
       throw e;
     }
@@ -41,7 +41,7 @@ class CartRepository {
 
   Future<void> removeCartItem(String cartId, String cartItemId) async {
     try {
-      await _api.removeCartItem(cartId, cartItemId);
+      await _api.cart.removeCartItem(cartId, cartItemId);
     } catch (e) {
       throw e;
     }
@@ -49,7 +49,7 @@ class CartRepository {
 
   Future<void> clearCart(String cartId) async {
     try {
-      await _api.clearCart(cartId);
+      await _api.cart.clearCart(cartId);
     } catch (e) {
       throw e;
     }

@@ -15,10 +15,10 @@ final class OrderRepository {
     OrderStatus? status,
   }) async {
     try {
-      final fetchPage = await _api.getOrderListPageByUser(
+      final fetchPage = await _api.order.getOrderListPageByUser(
         userId,
         page: page,
-        status: status?.toRemote,
+        status: status?.name,
       );
 
       final domainPage = fetchPage.toDomain;
@@ -33,7 +33,7 @@ final class OrderRepository {
 
   Future<Order> getUserOrderById(String orderId, String userId) async {
     try {
-      final fetchOrder = await _api.getUserOrderById(orderId, userId);
+      final fetchOrder = await _api.order.getUserOrderById(orderId, userId);
       return fetchOrder.toDomain;
     } catch (e) {
       throw e;
@@ -42,7 +42,7 @@ final class OrderRepository {
 
   Future<void> placeOrderByUser(String userId, Cart cart) async {
     try {
-      await _api.placeOrderByUser(userId, cart.toRemote);
+      await _api.order.placeOrderByUser(userId, cart.toRemote);
     } catch (e) {
       throw e;
     }

@@ -5,7 +5,7 @@ extension CartToRemote on Cart {
   CartRM get toRemote => CartRM(
         id: id,
         userId: userId,
-        items: items.map((item) => item.toRemote).toList(),
+        cartItems: cartItems.map((item) => item.toRemote).toList(),
         deliveryCost: deliveryCost,
       );
 }
@@ -24,19 +24,10 @@ extension ProducttoRemote on Product {
         name: name,
         price: price,
         averageRating: averageRating,
-        category: category?.toRemote,
+        category: category?.name,
         description: description,
         imageUrl: imageUrl,
         inventory: inventory,
         isFavorite: isFavorite,
       );
-}
-
-extension ProductCategorytoRemote on ProductCategory {
-  ProductCategoryRM get toRemote => switch (this) {
-        ProductCategory.shawarma => ProductCategoryRM.shawarma,
-        ProductCategory.pizza => ProductCategoryRM.pizza,
-        ProductCategory.burger => ProductCategoryRM.burger,
-        ProductCategory.yogurt => ProductCategoryRM.yogurt,
-      };
 }

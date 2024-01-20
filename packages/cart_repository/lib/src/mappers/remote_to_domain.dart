@@ -5,11 +5,11 @@ extension CartRMtoDomain on CartRM {
   Cart get toDomain => Cart(
         id: id,
         userId: userId,
-        items: items.map((item) => item.toDomain).toList(),
-        deliveryCost: deliveryCost,
-        total: total,
-        subtotal: subtotal,
-        quantity: quantity,
+        cartItems: cartItems.map((item) => item.toDomain).toList(),
+        deliveryCost: deliveryCost ?? 0.0,
+        total: total ?? 0.0,
+        subtotal: subtotal ?? 0.0,
+        quantity: quantity ?? 0,
       );
 }
 
@@ -18,7 +18,7 @@ extension CartItemRMtoDomain on CartItemRM {
         id: id,
         product: product.toDomain,
         quantity: quantity,
-        totalPrice: totalPrice,
+        totalPrice: totalPrice ?? 0.0,
       );
 }
 
@@ -28,19 +28,10 @@ extension ProductRMtoDomain on ProductRM {
         name: name,
         price: price,
         averageRating: averageRating,
-        category: category?.toDomain,
+        category: ProductCategory.getCategory(category),
         description: description,
         imageUrl: imageUrl,
         inventory: inventory,
         isFavorite: isFavorite,
       );
-}
-
-extension ProductCategoryRMtoDomain on ProductCategoryRM {
-  ProductCategory get toDomain => switch (this) {
-        ProductCategoryRM.shawarma => ProductCategory.shawarma,
-        ProductCategoryRM.pizza => ProductCategory.pizza,
-        ProductCategoryRM.burger => ProductCategory.burger,
-        ProductCategoryRM.yogurt => ProductCategory.yogurt,
-      };
 }

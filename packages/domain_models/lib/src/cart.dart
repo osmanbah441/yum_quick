@@ -6,14 +6,14 @@ class Cart extends Equatable {
   const Cart({
     required this.id,
     required this.userId,
-    required this.items,
+    required this.cartItems,
     required this.deliveryCost,
     required this.quantity,
     required this.subtotal,
     required this.total,
   });
   final String id, userId;
-  final List<CartItem> items;
+  final List<CartItem> cartItems;
 
   /// total product in the cart.
   final int quantity;
@@ -23,7 +23,7 @@ class Cart extends Equatable {
   List<Object?> get props => [
         id,
         userId,
-        items,
+        cartItems,
         deliveryCost,
         quantity,
         subtotal,

@@ -1,4 +1,26 @@
-enum ProductCategory { shawarma, pizza, burger, yogurt }
+enum ProductCategory {
+  shawarma,
+  pizza,
+  burger,
+  yogurt;
+
+  static ProductCategory? getCategory(String? category) {
+    switch (category) {
+      case 'burger':
+        return ProductCategory.burger;
+      case 'shawarma':
+        return ProductCategory.shawarma;
+      case 'pizza':
+        return ProductCategory.pizza;
+      case 'yogurt':
+        return ProductCategory.yogurt;
+      case null:
+        return null;
+      default:
+        throw ArgumentError("invalid enum value");
+    }
+  }
+}
 
 class Product {
   Product({

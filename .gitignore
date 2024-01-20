@@ -48,5 +48,6 @@ app.*.map.json
 **firebase_options**
 /web
 /windows
+/linux
 **/firebase_emulator/**
 **/firebase**

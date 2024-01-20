@@ -232,10 +232,7 @@ final class ProductListBloc extends Bloc<ProductListEvent, ProductListState> {
         searchTerm: currentlyAppliedFilter is ProductListFilterBySearchTerm
             ? currentlyAppliedFilter.searchTerm
             : '',
-        favoritedByUsername:
-            currentlyAppliedFilter is ProductListFilterByFavorites
-                ? _authenticatedUsername
-                : null,
+        userFavoritesOnly: isFilteringByFavorites && isUserSignedIn,
       );
 
       final newItemList = newPage.productList;

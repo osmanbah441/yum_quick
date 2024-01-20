@@ -24,7 +24,7 @@ extension CartItemRMtoDomain on CartItemRM {
         id: id,
         product: product.toDomain,
         quantity: quantity,
-        totalPrice: totalPrice,
+        totalPrice: totalPrice ?? 0.0,
       );
 }
 
@@ -34,19 +34,10 @@ extension ProductRMtoDomain on ProductRM {
         name: name,
         price: price,
         averageRating: averageRating,
-        category: category?.toDomain,
+        category: ProductCategory.getCategory(category),
         description: description,
         imageUrl: imageUrl,
         inventory: inventory,
         isFavorite: isFavorite,
       );
-}
-
-extension ProductCategoryRMtoDomain on ProductCategoryRM {
-  ProductCategory get toDomain => switch (this) {
-        ProductCategoryRM.shawarma => ProductCategory.shawarma,
-        ProductCategoryRM.pizza => ProductCategory.pizza,
-        ProductCategoryRM.burger => ProductCategory.burger,
-        ProductCategoryRM.yogurt => ProductCategory.yogurt,
-      };
 }

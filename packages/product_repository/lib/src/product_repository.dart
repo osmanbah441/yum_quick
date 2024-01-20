@@ -11,14 +11,14 @@ class ProductRepository {
     required int page,
     ProductCategory? category,
     required String searchTerm,
-    String? favoritedByUsername,
+    bool userFavoritesOnly = false,
   }) async {
     try {
-      final fetchPage = await _api.getProductListPageRM(
+      final fetchPage = await _api.product.getProductListPageRM(
         page: page,
-        category: category?.toRemote,
+        category: category?.name,
         searchTerm: searchTerm,
-        favoritedByUsername: favoritedByUsername,
+        userFavoritesOnly: userFavoritesOnly,
       );
 
       return fetchPage.toDomain;
@@ -29,7 +29,7 @@ class ProductRepository {
 
   Future<Product> getProductDetails(String productId) async {
     try {
-      final fetchProduct = await _api.getProductDetails(productId);
+      final fetchProduct = await _api.product.getProductDetails(productId);
       return fetchProduct.toDomain;
     } catch (e) {
       throw 'failed to get product';
@@ -38,7 +38,7 @@ class ProductRepository {
 
   Future<Product> favoriteProduct(String productId) async {
     try {
-      final product = await _api.favoriteProduct(productId);
+      final product = await _api.product.favoriteProduct(productId);
       return product.toDomain;
     } catch (e) {
       throw e;
@@ -47,7 +47,7 @@ class ProductRepository {
 
   Future<Product> unfavoriteQuote(String productId) async {
     try {
-      final product = await _api.unfavoriteQuote(productId);
+      final product = await _api.product.unfavoriteProduct(productId);
       return product.toDomain;
     } catch (e) {
       throw e;

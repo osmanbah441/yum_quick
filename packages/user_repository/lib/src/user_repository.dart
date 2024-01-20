@@ -10,12 +10,17 @@ class UserRepository {
 
   final QuickApi _api;
 
+  Future<String?> getAccessToken() {
+    return Future.value(null);
+  }
+
   Stream<User?> getUserStream() =>
-      _api.getUserStream().map((user) => user.toDomain);
+      _api.user.currentUser().map((user) => user?.toDomain);
 
   Future<User> register(String username, String email, String password) async {
     try {
-      final user = await _api.register(username, email, password);
+      final user = await _api.user
+          .createUserWithEmailAndPassword(username, email, password);
       return user.toDomain;
     } catch (e) {
       throw e;
@@ -24,7 +29,7 @@ class UserRepository {
 
   Future<User> login(String email, String password) async {
     try {
-      final user = await _api.login(email, password);
+      final user = await _api.user.signInWithEmailAndPassword(email, password);
       return user.toDomain;
     } catch (e) {
       throw e;
@@ -33,7 +38,7 @@ class UserRepository {
 
   Future<void> logout() async {
     try {
-      await _api.logout();
+      await _api.user.signOut();
     } catch (e) {
       throw e;
     }
