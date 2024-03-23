@@ -14,28 +14,13 @@ dependencies:
     path: ./packages/domain_models
   component_library:
     path: ./packages/component_library
-  product_repository:
-    path: ./packages/product_repository
-  user_repository:
-    path: ./packages/user_repository
-  cart_repository:
-    path: ./packages/cart_repository
-  order_repository:
-    path: ./packages/order_repository
-  quick_api:
-    path: ./packages/quick_api
+  repositories:
+    path: ./packages/repositories
+  api:
+    path: ./packages/api
+  screens:
+    path: ./packages/screens
 
-  # features
-  product_list:
-    path: ./packages/features/product_list
-  product_details:
-    path: ./packages/features/product_details
-  shopping_cart:
-    path: ./packages/features/shopping_cart
-  order_list:
-    path: ./packages/features/order_list
-  order_details:
-    path: ./packages/features/order_details
 
   # third party
   go_router: ^12.1.1

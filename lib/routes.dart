@@ -1,17 +1,10 @@
-import 'package:cart_repository/cart_repository.dart';
+import 'package:api/api.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:order_details/order_details.dart';
-import 'package:order_list/order_list.dart';
-import 'package:order_repository/order_repository.dart';
-import 'package:product_details/product_details.dart';
-import 'package:product_list/product_list.dart';
-import 'package:product_repository/product_repository.dart';
-import 'package:quick_api/quick_api.dart';
-import 'package:shopping_cart/shopping_cart.dart';
-import 'package:user_repository/user_repository.dart';
+import 'package:repositories/repositories.dart';
+import 'package:screens/screens.dart';
 
-final api = QuickApi();
+final api = Api();
 
 final class AppRouter {
   static final _productRepository = ProductRepository(api: api);
